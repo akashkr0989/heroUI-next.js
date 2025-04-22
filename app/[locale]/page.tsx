@@ -59,24 +59,6 @@
 //   );
 // }
 
-import { getTranslations } from "@/lib/contentful";
-
-export default async function HomePage({
-  params,
-}: {
-  params: { locale: string };
-}) {
-  const t = await getTranslations(params.locale);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-2xl font-bold">
-        {t["home.welcome"] || "Welcome to Bloom"}
-      </h1>
-    </div>
-  );
-}
-
-export async function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "ar" }];
+export default function HomePage() {
+  return <h1 className="text-3xl font-bold text-center">Welcome to Bloom!</h1>;
 }

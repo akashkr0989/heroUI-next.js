@@ -1,32 +1,68 @@
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+import { NextResponse } from "next/server";
 
 const PUBLIC_FILE = /\.(.*)$/;
-const locales = ["en", "ar"];
-const defaultLocale = "en";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
-    pathname.startsWith("/api") ||
+    PUBLIC_FILE.test(pathname) ||
     pathname.startsWith("/_next") ||
-    PUBLIC_FILE.test(pathname)
+    pathname.includes("/api/")
   ) {
     return NextResponse.next();
   }
 
-  const pathnameLocale = pathname.split("/")[1];
-
-  if (locales.includes(pathnameLocale)) {
-    return NextResponse.next(); // Locale already present
+  // Handle root redirect
+  if (pathname === "/") {
+    return NextResponse.redirect(new URL("/en", request.url));
   }
 
-  const url = request.nextUrl.clone();
+  // Check if path has valid locale
+  const pathnameIsMissingLocale = !["en", "ar"].some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
 
-  url.pathname = `/${defaultLocale}${pathname}`;
+  if (pathnameIsMissingLocale) {
+    const locale = "en"; // default
 
-  return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
+  }
+
+  return NextResponse.next();
 }
+
+// import { NextRequest, NextResponse } from "next/server";
+
+// const PUBLIC_FILE = /\.(.*)$/;
+// const locales = ["en", "ar"];
+// const defaultLocale = "en";
+
+// export function middleware(request: NextRequest) {
+//   const { pathname } = request.nextUrl;
+
+//   if (
+//     pathname.startsWith("/api") ||
+//     pathname.startsWith("/_next") ||
+//     PUBLIC_FILE.test(pathname)
+//   ) {
+//     return NextResponse.next();
+//   }
+
+//   const pathnameLocale = pathname.split("/")[1];
+
+//   if (locales.includes(pathnameLocale)) {
+//     return NextResponse.next(); // Locale already present
+//   }
+
+//   const url = request.nextUrl.clone();
+
+//   url.pathname = `/${defaultLocale}${pathname}`;
+
+//   return NextResponse.redirect(url);
+// }
 
 // const PUBLIC_FILE = /\.(.*)$/;
 // const locales = ["en", "ar"];

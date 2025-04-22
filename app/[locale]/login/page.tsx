@@ -99,7 +99,8 @@ export default async function LoginPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  console.log(locale)
+
+  console.log(locale);
   const t = await getTranslations(locale);
 
   return (
