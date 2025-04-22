@@ -86,12 +86,21 @@ export async function generateStaticParams() {
   return [{ locale: "en" }, { locale: "ar" }];
 }
 
+// export default async function LoginPage({
+//   params,
+// }: {
+//   params: { locale: string };
+// }) {
+//   const t = await getTranslations(params.locale);
+
 export default async function LoginPage({
   params,
 }: {
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const t = await getTranslations(params.locale);
+  const { locale } = await params;
+  console.log(locale)
+  const t = await getTranslations(locale);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

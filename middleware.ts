@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_FILE = /\.(.*)$/;
 const locales = ["en", "ar"];
-const defaultLocale = "en"; // ✅ <== this line was missing
+const defaultLocale = "en";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -18,12 +18,12 @@ export function middleware(request: NextRequest) {
   const pathnameLocale = pathname.split("/")[1];
 
   if (locales.includes(pathnameLocale)) {
-    return NextResponse.next();
+    return NextResponse.next(); // Locale already present
   }
 
   const url = request.nextUrl.clone();
 
-  url.pathname = `/${defaultLocale}${pathname}`; // ✅ now works
+  url.pathname = `/${defaultLocale}${pathname}`;
 
   return NextResponse.redirect(url);
 }
